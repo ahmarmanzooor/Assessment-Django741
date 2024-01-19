@@ -1,22 +1,25 @@
 
+import pdb
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product, Seller
+from .models import Category, Product, Seller
 from .serializers import ProductSerializer, SellerSerializer
 # from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 
 
 from django.contrib.auth import authenticate, login,logout
 from django.shortcuts import render, redirect
-from .forms import ProductForm
+# from .forms import ProductForm
 
 @api_view(['POST'])
 def register_view(request):
     username = request.data.get('username')
+    # print(username)
     password = request.data.get('password')
     email = request.data.get('email')
 
@@ -29,6 +32,10 @@ def register_view(request):
 
     # Create a new user using Django's default authentication
     user = User.objects.create_user(username=username, password=password, email=email)
+    messages.success(request, 'Registration successful. You are now logged in.')
+    return redirect('create_product')
+    
+
 
     return Response({'message': 'Registration successful.'}, status=status.HTTP_201_CREATED)
 
@@ -47,8 +54,10 @@ def login_view(request):
     if user is not None:
         # Login the user using Django's login function
         login(request, user)
+        messages.success(request,  'You are now logged in.')
+        
 
-        return Response({'message': 'Login successful.'}, status=status.HTTP_200_OK)
+        return redirect('create_product')
     else:
         return Response({'error': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -61,22 +70,46 @@ def logout_view(request):
 
     return Response({'message': 'Logout successful.'}, status=status.HTTP_200_OK)
 
-# # User logout class base view
 
-# class LogoutView(APIView):
-#     permission_classes = (IsAuthenticated,)
 
-#     def post(self, request):
-#         refresh_token = request.data.get('refresh_token')
+def LandingPage(request):
+        messages.info(request, 'You are currently logged out.')
+        return render(request, 'login.html')  # Redirect to your login
 
-#         try:
-#             token = RefreshToken(refresh_token)
-#             token.blacklist()
-#         except Exception:
-#             return Response({'error': 'Invalid refresh token.'}, status=status.HTTP_400_BAD_REQUEST)
+# @api_view(['GET', 'POST'])
+# @login_required
+# def add_product(request):
+#     if request.method == 'GET':
+#         categories = Category.objects.all()
+#         sellers = Seller.objects.all()
+#         return render(request, 'add_product.html', {'categories': categories, 'sellers': sellers})
+@login_required
+# @api_view(['GET', 'POST'])
+def add_product(request):
+    if request.method == 'GET':
+        categories = Category.objects.all()
+        sellers = Seller.objects.all()
+        return render(request, 'add_product.html', {'categories': categories, 'sellers': sellers})
 
-#         return Response({'message': 'Logout successful.'}, status=status.HTTP_200_OK)
+    elif request.method == 'POST':
+        product_name = request.POST['productName']
+        product_description = request.POST['productDescription']
+        product_price = request.POST['productPrice']
+        category_id = request.POST['category']
+        seller_id = request.POST['seller']
 
+        # Assuming you have a Product model with appropriate fields
+        product = Product.objects.create(
+            name=product_name,
+            description=product_description,
+            price=product_price,
+            category_id=category_id,
+            seller_id=seller_id
+        )
+        return redirect('product-list')  # Replace 'product_list' with the actual URL name for your product list page
+
+    # Handle other cases or provide a default response if needed
+    return render(request, 'add_product.html')
 
 
 
@@ -85,15 +118,7 @@ def logout_view(request):
 def product_list(request):
     if request.method == 'GET':
         products = Product.objects.all()
-        serializer = ProductSerializer(products, many=True)
-        return Response(serializer.data)
-
-    elif request.method == 'POST':
-        serializer = ProductSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return render(request, 'product_list.html', {'products': products})
 
 # Retrieve, update, or delete a product
 @api_view(['GET', 'PUT', 'DELETE'])
@@ -126,7 +151,8 @@ def seller_list(request):
     if request.method == 'GET':
         sellers = Seller.objects.all()
         serializer = SellerSerializer(sellers, many=True)
-        return Response(serializer.data)
+        return render(request, 'seller_list.html', {'sellers': sellers})
+
 
     elif request.method == 'POST':
         serializer = SellerSerializer(data=request.data)
@@ -163,14 +189,14 @@ def seller_detail(request, pk):
     
     
     
-def create_product(request):
-    if request.method == 'POST':
-        form = ProductForm(request.POST)
-        if form.is_valid():
-            form.save()
-            # You can redirect to a success page or display a success message
-            return redirect('product_list')
-    else:
-        form = ProductForm()
+# def create_product(request):
+#     if request.method == 'POST':
+#         form = ProductForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             # You can redirect to a success page or display a success message
+#             return redirect('product_list')
+#     else:
+#         form = ProductForm()
 
-    return render(request, 'create_product.html', {'form': form})    
+#     return render(request, 'create_product.html', {'form': form})    

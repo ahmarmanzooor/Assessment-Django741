@@ -1,0 +1,106 @@
+<!-- add_product.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Product</title>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f8f9fa;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Add Product Form -->
+    <h1>Add Product</h1>
+    <form action="{% url 'add-product' %}" method="post">
+        {% csrf_token %}
+        <label for="productName">Product Name:</label>
+        <input type="text" id="productName" name="productName" placeholder="Enter product name" required>
+
+        <label for="productDescription">Product Description:</label>
+        <input type="text" id="productDescription" name="productDescription" placeholder="Enter product description" required>
+
+        <label for="productPrice">Product Price:</label>
+        <input type="text" id="productPrice" name="productPrice" placeholder="Enter product price" required>
+
+        <label for="category">Category:</label>
+        <!-- Populate options dynamically from the database -->
+        <select id="category" name="category">
+            {% for category in categories %}
+            <option value="{{ category.id }}">{{ category.name }}</option>
+            {% endfor %}
+        </select>
+
+        <label for="seller">Seller:</label>
+        <!-- Populate options dynamically from the database -->
+        <select id="seller" name="seller">
+            {% for seller in sellers %}
+            <option value="{{ seller.id }}">{{ seller.name }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Add Product</button>
+    </form>
+</body>
+
+</html>
