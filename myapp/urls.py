@@ -9,7 +9,7 @@
 
 from django.contrib import admin
 from django.urls import path
-from .views import product_list, product_detail, seller_list, seller_detail,login_view,register_view,logout_view,LandingPage,add_product
+from .views import product_list, product_detail, seller_list, seller_detail,login_view,register_view,logout_view,LandingPage,add_product,authenticated_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,6 +22,9 @@ urlpatterns = [
     path('loginPostman/', login_view, name='login'),
     path('logoutPostman/', logout_view, name='logout'),
     path('', LandingPage, name='create_product'),
+    path('view/', authenticated_view, name='authView'),
+    
+    
 
     
    

@@ -19,7 +19,6 @@ from django.shortcuts import render, redirect
 @api_view(['POST'])
 def register_view(request):
     username = request.data.get('username')
-    # print(username)
     password = request.data.get('password')
     email = request.data.get('email')
 
@@ -32,8 +31,13 @@ def register_view(request):
 
     # Create a new user using Django's default authentication
     user = User.objects.create_user(username=username, password=password, email=email)
+
+    # Log the user in
+    user = authenticate(request, username=username, password=password)
+    login(request, user)
+
     messages.success(request, 'Registration successful. You are now logged in.')
-    return redirect('create_product')
+    return redirect('authView')
     
 
 
@@ -57,20 +61,24 @@ def login_view(request):
         messages.success(request,  'You are now logged in.')
         
 
-        return redirect('create_product')
+        return redirect('authView')
     else:
         return Response({'error': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
 
 
-@api_view(['POST'])
+@api_view(['GET','POST'])
 @login_required
 def logout_view(request):
     # Logout the user using Django's logout function
     logout(request)
+    # return redirect('login')
+    return render(request, 'login.html')  # Redirect to your login
+    
 
-    return Response({'message': 'Logout successful.'}, status=status.HTTP_200_OK)
+    # return Response({'message': 'Logout successful.'}, status=status.HTTP_200_OK)
 
-
+def authenticated_view(request):
+    return render(request, 'authenticatedView.html')
 
 def LandingPage(request):
         messages.info(request, 'You are currently logged out.')
@@ -189,14 +197,3 @@ def seller_detail(request, pk):
     
     
     
-# def create_product(request):
-#     if request.method == 'POST':
-#         form = ProductForm(request.POST)
-#         if form.is_valid():
-#             form.save()
-#             # You can redirect to a success page or display a success message
-#             return redirect('product_list')
-#     else:
-#         form = ProductForm()
-
-#     return render(request, 'create_product.html', {'form': form})    

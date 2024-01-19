@@ -24,15 +24,32 @@
         <div class="container-fluid">
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    
+                    <li class="navbar-brand">
+                        <a class="nav-link {% block homeactive %} {% endblock homeactive %}" href="{% url 'add-product' %}">Add Product</a>
+                    </li>
+                    <li class="navbar-brand">
+                        <a class="nav-link {% block aboutactive %} {% endblock aboutactive %}" href="{% url 'product-list' %}">Product List</a>
+                    </li>
+                    <li class="navbar-brand">
+                        <a class="nav-link {% block selleractive %} {% endblock selleractive %}" href="{% url 'seller-list' %}">Sellers Profiles</a>
+                    </li>
                 </ul>
                 <ul class="navbar-nav ml-auto">
-                    <li class="navbar-brand">
-                        <a class="nav-link" href="{% url 'product-list' %}" data-bs-toggle="modal" data-bs-target="#loginModal">Login</a>
-                    </li>
-                    <li class="navbar-brand">
-                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#signupModal">Sign Up</a>
-                    </li>
+                    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+                        <div class="container-fluid">
+                            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                                <!-- ... your existing navigation links ... -->
+                                <ul class="navbar-nav ml-auto">
+                                    {% if user.is_authenticated %}
+                                        <li class="navbar-brand">
+                                            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                                        </li>
+                                    
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+                    </nav>
                 </ul>
             </div>
         </div>
@@ -49,64 +66,7 @@
     </div>
     {% endif %}
 
-    <!-- Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="loginModalLabel">Login</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{% url 'login' %}" method="post">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="username" class="form-label">User Name</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Enter your username">
-                        </div>
 
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Enter Password</label>
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-                        </div>
-
-                        <button type="submit" class="btn btn-primary my-2">Submit</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Signup Modal -->
-    <div class="modal fade" id="signupModal" tabindex="-1" aria-labelledby="signupModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="signupModalLabel">Sign Up</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{% url 'register' %}" method="post">
-                        {% csrf_token %}
-
-                        <div class="mb-3">
-                            <label for="signup-username" class="form-label">Username</label>
-                            <input type="text" class="form-control" id="signup-username" name="username" placeholder="Username">>
-                        </div>
-                        <div class="mb-3">
-                            <label for="signup-password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="signup-password"name="password" placeholder="Password">>
-                        </div>
-                        <div class="mb-3">
-                            <label for="signup-email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="signup-email"name="email" placeholder="Email">>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Sign Up</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- Add Product Modal -->
 <div class="modal fade" id="addProductModal" tabindex="-1" aria-labelledby="addProductModalLabel" aria-hidden="true">
     <div class="modal-dialog">
