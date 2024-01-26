@@ -105,6 +105,7 @@ def add_product(request):
         product_price = request.POST['productPrice']
         category_id = request.POST['category']
         seller_id = request.POST['seller']
+        pdb.set_trace
 
         # Assuming you have a Product model with appropriate fields
         product = Product.objects.create(
